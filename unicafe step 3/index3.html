@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicafe Feedback</title>
+    <!-- Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional custom styles for font and background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Give Feedback</h1>
+        
+        <!-- Feedback Buttons -->
+        <div class="flex justify-center space-x-4 mb-8">
+            <button id="goodBtn" class="bg-green-500 text-white font-semibold py-2 px-6 rounded-full shadow-md hover:bg-green-600 transition-colors duration-200">
+                Good
+            </button>
+            <button id="neutralBtn" class="bg-gray-400 text-white font-semibold py-2 px-6 rounded-full shadow-md hover:bg-gray-500 transition-colors duration-200">
+                Neutral
+            </button>
+            <button id="badBtn" class="bg-red-500 text-white font-semibold py-2 px-6 rounded-full shadow-md hover:bg-red-600 transition-colors duration-200">
+                Bad
+            </button>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Statistics</h2>
+        
+        <!-- This section will be updated by the "renderStatistics" function -->
+        <div id="statisticsDisplay" class="space-y-4">
+            <!-- Content will be generated here by the JavaScript function -->
+        </div>
+    </div>
+
+    <!-- JavaScript to handle the logic -->
+    <script>
+        // Get references to all the HTML elements we need
+        const goodBtn = document.getElementById('goodBtn');
+        const neutralBtn = document.getElementById('neutralBtn');
+        const badBtn = document.getElementById('badBtn');
+        const statisticsDisplay = document.getElementById('statisticsDisplay');
+        
+        // Variables to store the counts and calculated values
+        // This acts as our application's state
+        let goodCount = 0;
+        let neutralCount = 0;
+        let badCount = 0;
+
+        /**
+         * Renders the statistics display based on the current counts.
+         * This function acts as the "Statistics component" by centralizing
+         * all the logic for displaying the calculated feedback data.
+         */
+        const renderStatistics = () => {
+            const totalCount = goodCount + neutralCount + badCount;
+            const scoreSum = (goodCount * 1) + (neutralCount * 0) + (badCount * -1);
+            
+            // Generate the HTML content dynamically
+            let content = '';
+
+            if (totalCount > 0) {
+                const average = scoreSum / totalCount;
+                const positivePercentage = (goodCount / totalCount) * 100;
+
+                content = `
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                        <span class="text-gray-700 font-medium">Good:</span>
+                        <span class="text-green-600 font-bold text-lg">${goodCount}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                        <span class="text-gray-700 font-medium">Neutral:</span>
+                        <span class="text-gray-500 font-bold text-lg">${neutralCount}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                        <span class="text-gray-700 font-medium">Bad:</span>
+                        <span class="text-red-600 font-bold text-lg">${badCount}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                        <span class="text-gray-700 font-medium">All:</span>
+                        <span class="text-gray-700 font-bold text-lg">${totalCount}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                        <span class="text-gray-700 font-medium">Average:</span>
+                        <span class="text-gray-700 font-bold text-lg">${average.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                        <span class="text-gray-700 font-medium">Positive:</span>
+                        <span class="text-gray-700 font-bold text-lg">${positivePercentage.toFixed(2)}%</span>
+                    </div>
+                `;
+            } else {
+                 content = `
+                    <div class="flex justify-center items-center bg-gray-100 p-4 rounded-lg text-gray-700">
+                        No feedback given
+                    </div>
+                 `;
+            }
+            
+            // Update the display with the new content
+            statisticsDisplay.innerHTML = content;
+        };
+
+        // Add event listeners to each button to handle clicks
+        goodBtn.addEventListener('click', () => {
+            goodCount++;
+            renderStatistics();
+        });
+        
+        neutralBtn.addEventListener('click', () => {
+            neutralCount++;
+            renderStatistics();
+        });
+        
+        badBtn.addEventListener('click', () => {
+            badCount++;
+            renderStatistics();
+        });
+
+        // Initial render of the statistics display
+        renderStatistics();
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anecdotes App</title>
+    <!-- Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Container for the Anecdote App -->
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Anecdote of the Day</h1>
+        <div id="anecdoteDisplay" class="mb-2 text-lg text-gray-700 italic min-h-[4rem]"></div>
+        <div class="mb-4 text-sm text-gray-500">
+            Has <span id="votesDisplay" class="font-bold">0</span> votes.
+        </div>
+        <div class="flex justify-center space-x-4">
+            <button id="voteBtn" class="bg-green-500 text-white font-semibold py-2 px-6 rounded-full shadow-md hover:bg-green-600 transition-colors duration-200">
+                Vote
+            </button>
+            <button id="anecdoteBtn" class="bg-blue-500 text-white font-semibold py-2 px-6 rounded-full shadow-md hover:bg-blue-600 transition-colors duration-200">
+                Next Anecdote
+            </button>
+        </div>
+        
+        <div id="mostVotedContainer" class="mt-8 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Anecdote with most votes</h2>
+            <div id="mostVotedAnecdote" class="mb-2 text-lg text-gray-700 italic"></div>
+            <div class="text-sm text-gray-500">
+                Has <span id="mostVotedVotes" class="font-bold">0</span> votes.
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle the logic for the app -->
+    <script>
+        const anecdotes = [
+            'If it hurts, do it more often.',
+            'Adding manpower to a late software project makes it later!',
+            'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+            'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+            'Premature optimization is the root of all evil.',
+            'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+            'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
+            'The only way to go fast, is to go well.'
+        ];
+        
+        const anecdoteBtn = document.getElementById('anecdoteBtn');
+        const voteBtn = document.getElementById('voteBtn');
+        const anecdoteDisplay = document.getElementById('anecdoteDisplay');
+        const votesDisplay = document.getElementById('votesDisplay');
+        const mostVotedContainer = document.getElementById('mostVotedContainer');
+        const mostVotedAnecdote = document.getElementById('mostVotedAnecdote');
+        const mostVotedVotes = document.getElementById('mostVotedVotes');
+
+        // Initialize votes array with all zeros
+        let votes = Array(anecdotes.length).fill(0);
+        let selectedIndex = 0;
+
+        const renderMostVoted = () => {
+            let maxVotes = 0;
+            let maxIndex = -1;
+            for (let i = 0; i < votes.length; i++) {
+                if (votes[i] > maxVotes) {
+                    maxVotes = votes[i];
+                    maxIndex = i;
+                }
+            }
+
+            if (maxIndex !== -1 && maxVotes > 0) {
+                mostVotedContainer.classList.remove('hidden');
+                mostVotedAnecdote.textContent = anecdotes[maxIndex];
+                mostVotedVotes.textContent = votes[maxIndex];
+            } else {
+                mostVotedContainer.classList.add('hidden');
+            }
+        };
+
+        const renderAnecdote = () => {
+            anecdoteDisplay.textContent = anecdotes[selectedIndex];
+            votesDisplay.textContent = votes[selectedIndex];
+            renderMostVoted();
+        };
+
+        anecdoteBtn.addEventListener('click', () => {
+            selectedIndex = Math.floor(Math.random() * anecdotes.length);
+            renderAnecdote();
+        });
+        
+        voteBtn.addEventListener('click', () => {
+            const votesCopy = [...votes];
+            votesCopy[selectedIndex] += 1;
+            votes = votesCopy;
+            renderAnecdote();
+        });
+
+        renderAnecdote();
+    </script>
+</body>
+</html>
