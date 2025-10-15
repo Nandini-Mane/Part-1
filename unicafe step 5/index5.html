@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicafe Feedback</title>
+    <!-- Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional custom styles for font and background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Give Feedback</h1>
+        
+        <!-- Feedback Buttons will be dynamically added here -->
+        <div id="buttonsContainer" class="flex justify-center space-x-4 mb-8"></div>
+
+        <!-- The statistics container is initially hidden -->
+        <div id="statisticsContainer" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Statistics</h2>
+            <!-- This section will be updated by the "renderStatistics" function -->
+            <div id="statisticsDisplay" class="space-y-4">
+                <!-- Content will be generated here by the JavaScript function -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle the logic -->
+    <script>
+        // Get references to the HTML containers we need
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        const statisticsContainer = document.getElementById('statisticsContainer');
+        const statisticsDisplay = document.getElementById('statisticsDisplay');
+        
+        // Variables to store the counts and calculated values (our application's state)
+        let goodCount = 0;
+        let neutralCount = 0;
+        let badCount = 0;
+
+        /**
+         * A "component" function for a single button.
+         * Creates a button element and attaches a click handler.
+         */
+        const createButton = (text, clickHandler) => {
+            const button = document.createElement('button');
+            button.textContent = text;
+            button.className = `font-semibold py-2 px-6 rounded-full shadow-md transition-colors duration-200`;
+            
+            // Set specific colors based on the button text
+            if (text === 'Good') {
+                button.classList.add('bg-green-500', 'text-white', 'hover:bg-green-600');
+            } else if (text === 'Neutral') {
+                button.classList.add('bg-gray-400', 'text-white', 'hover:bg-gray-500');
+            } else {
+                button.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
+            }
+            
+            button.addEventListener('click', clickHandler);
+            return button;
+        };
+
+        /**
+         * A "component" function for a single statistic line.
+         * Creates an HTML string for a single row of statistics.
+         */
+        const createStatisticLine = (text, value) => {
+            let valueClass = 'text-gray-700';
+            if (text === 'Good:') {
+                 valueClass = 'text-green-600';
+            } else if (text === 'Neutral:') {
+                 valueClass = 'text-gray-500';
+            } else if (text === 'Bad:') {
+                 valueClass = 'text-red-600';
+            }
+
+            return `
+                <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                    <span class="text-gray-700 font-medium">${text}</span>
+                    <span class="${valueClass} font-bold text-lg">${value}</span>
+                </div>
+            `;
+        };
+
+        /**
+         * Renders the statistics display based on the current counts.
+         * This function acts as the "Statistics component" by centralizing
+         * all the logic for displaying the calculated feedback data.
+         */
+        const renderStatistics = () => {
+            const totalCount = goodCount + neutralCount + badCount;
+            
+            if (totalCount > 0) {
+                // Show the container once feedback is given
+                statisticsContainer.classList.remove('hidden');
+
+                const scoreSum = (goodCount * 1) + (neutralCount * 0) + (badCount * -1);
+                const average = scoreSum / totalCount;
+                const positivePercentage = (goodCount / totalCount) * 100;
+
+                // Generate and combine the HTML for all statistic lines
+                const statisticsHtml = [
+                    createStatisticLine('Good:', goodCount),
+                    createStatisticLine('Neutral:', neutralCount),
+                    createStatisticLine('Bad:', badCount),
+                    createStatisticLine('All:', totalCount),
+                    createStatisticLine('Average:', average.toFixed(2)),
+                    createStatisticLine('Positive:', positivePercentage.toFixed(2) + '%')
+                ].join('');
+                
+                statisticsDisplay.innerHTML = statisticsHtml;
+            } else {
+                 // No need to display anything when no feedback is given
+                 // as the entire container is hidden by default.
+            }
+        };
+
+        // Create and append the buttons to the page
+        const goodBtn = createButton('Good', () => {
+            goodCount++;
+            renderStatistics();
+        });
+        const neutralBtn = createButton('Neutral', () => {
+            neutralCount++;
+            renderStatistics();
+        });
+        const badBtn = createButton('Bad', () => {
+            badCount++;
+            renderStatistics();
+        });
+        
+        buttonsContainer.appendChild(goodBtn);
+        buttonsContainer.appendChild(neutralBtn);
+        buttonsContainer.appendChild(badBtn);
+    </script>
+</body>
+</html>
